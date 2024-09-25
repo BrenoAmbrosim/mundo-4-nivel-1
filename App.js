@@ -1,20 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import CadastroFornecedor from './components/CadastroFornecedor';
+import ListaFornecedores from './components/ListaFornecedores';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+const App = () => {
+  const [fornecedores, setFornecedores] = useState([]);
+
+  const cadastrarFornecedor = (fornecedor) => {
+    setFornecedores([...fornecedores, fornecedor]);
+  };
+
+  const apagarFornecedor = (nome) => {
+    setFornecedores(fornecedores.filter(fornecedor => fornecedor.nome !== nome));
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Cadastro">
+        <Stack.Screen name="Cadastro" options={{ title: 'Cadastro de Fornecedores' }}>
+          {props => <CadastroFornecedor {...props} onCadastrar={cadastrarFornecedor} />}
+        </Stack.Screen>
+        <Stack.Screen name="Lista" options={{ title: 'Lista de Fornecedores' }}>
+          {props => <ListaFornecedores {...props} fornecedores={fornecedores} onApagar={apagarFornecedor} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
+
